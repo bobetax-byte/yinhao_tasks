@@ -1,0 +1,48 @@
+.search-qq-container {
+  display: flex;
+  flex-direction: column;
+  margin:10px;
+  .search-qq-title {
+    font-size: 16px;
+  }
+  .search-info {
+    input {
+      outline: none;
+      border: none;
+      border-bottom: 1px solid #ccc;
+      margin-left: 10px;
+    }
+  }
+  .search-result{
+    width: 140px;
+    .search-list {
+      margin: 0;
+    }
+    li {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      img{
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 10px;
+      }
+      .desc{
+        flex:1;
+        display: flex;
+        align-items: center;
+        h4{
+          line-height: 20px;
+          margin: 0;
+        }
+        
+      }
+    }
+  }
+}
+
+ul,li {
+  list-style-type: none;
+}
