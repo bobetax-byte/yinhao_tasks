@@ -1,65 +1,80 @@
-import { useState, } from 'react'
-import { getInfo } from '../../request';
-import { debounce } from 'lodash'
+import { useState, useTransition } from 'react'
+import { throttle } from 'lodash'
+import toast, { Toaster } from 'react-hot-toast';
+import axios from 'axios';
 
 import { SearchQQItem } from "./SearchQQItem";
+import { QQDetailInfo } from '../../qq';
 import './index.scss'
-
-import toast from 'react-hot-toast';
-import { QQItem } from './qqItem';
-
-const mock = {
-  qq: 131,
-  name: 'string1',
-  qlogo: "http:\/\/qlogo2.store.qq.com\/qzone\/774740085\/774740085\/100"
-}
 
 // 请求链接
 const QUERYQQ: string = "https://api.uomg.com/api/qq.info";
 
+
+function getData(qq:string): Promise<QQDetailInfo>{
+  return axios.get(`QUERYQQ?qq=${qq}`);
+}
+
 function SearchQQ() {
-  const [qqnum, setQQnum] = useState("");
+  let [qqnum, setQQnum] = useState("");
   let [loading, setLoading] = useState(false);
-  let [qqInfo, setQqInfo] = useState <QQItem>({});
-  let getQQDetail = debounce(async (qq: string) => {
+  let [empty, setEmpty] = useState(false);
+  let [qqInfo, setQqInfo] = useState<QQDetailInfo>({});
+  let [isPending, startPending] = useTransition();
+  
+  // 获取QQ号的详情信息
+  let getQQDetail = async (qq:string) => {
     if (loading) return
     setLoading(true)
-    const { code, name, qlogo, msg } = await getInfo(QUERYQQ, { qq });
+    const { code, name = "", qlogo = "", msg = "" } = await getData(qq) || {}
     setLoading(false)
-    console.log('code->',code)
     if (code !== 1) {
       // TODO not work
       toast.error(msg);
+      setEmpty(true)
       return
     };
+    // 清除所有的toast
+    toast.dismiss();
+    setEmpty(false)
     setQqInfo({
-      qq, name, qlogo
+      qq,
+      name,
+      qlogo
     });
-  }, 1000)
+  }
 
+  // 用户输入响应
   function handleInputChange(e: any) {
     const { value } = e.target;
     // value 只接受number
     let result: string = value.replace(/\D/g, "")
     // 显示 value
+    // 实时响应，优先级高
     setQQnum(result)
-    // TODO 防抖
-    getQQDetail(result)
+    // 渲染优先级低
+    startPending(()=> useThrottle(result))
   }
+  // TODO 防抖
+  const useThrottle = throttle((value:string) => {
+    getQQDetail(value)
+  }, 1000)
+
   return (
     <div className="search-qq-container">
       <h3 className="search-qq-title">QQ号查询</h3>
       <div className="search-info">
         <span>QQ</span>
-        <input type="text" value={qqnum} onChange={handleInputChange} />
+        <input type="text" placeholder='请输入QQ号' value={qqnum} onChange={handleInputChange} />
       </div>
       <div className="search-result">
         <div className='search-list'>
           {
-            qqInfo.qq && <SearchQQItem qqInfo={qqInfo} loading={loading}></SearchQQItem>
+            qqInfo.qq && <SearchQQItem qqInfo={qqInfo} isLoading={loading} isEmpty={empty}></SearchQQItem>
           }
         </div>
       </div>
+      <Toaster></Toaster>
     </div>
   )
 }

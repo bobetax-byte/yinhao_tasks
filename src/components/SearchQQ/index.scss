@@ -46,14 +46,16 @@
     border-radius: 50%;
     overflow: hidden;
     margin-right: 10px;
-    
   }
-  .loading {
+  .placeholder-img {
     display: block;
     width: 26px;
     height: 26px;
     margin: 4px 40px;
-    animation:loading infinite 1s;
+    border-radius: 4px;
+    &.animation {
+      animation:loading infinite 1s;
+    };
   }
   .desc{
     flex:1;

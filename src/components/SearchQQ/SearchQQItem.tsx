@@ -1,12 +1,22 @@
+import { QQItemProps,QQDetailInfo } from '../../qq';
+
 import loadingSVG from '../../loading.svg'
+import listEmpty from '../../list-empty.svg'
 import './index.scss';
 
-export function SearchQQItem(props: any) {
-  const { qqInfo,loading } = props
-  if (loading) {
+export function SearchQQItem(props: QQItemProps) {
+  const { qqInfo, isLoading = false, isEmpty = false } = props
+  if (isLoading) {
     return (
       <div className="search-item">
-        <img className='loading' src={loadingSVG} alt="" />
+        <img className='placeholder-img animation' src={loadingSVG} alt="" />
+      </div>
+    )
+  }
+  if (isEmpty) {
+    return (
+      <div className="search-item">
+        <img className='placeholder-img' src={listEmpty} alt="" />
       </div>
     )
   }
