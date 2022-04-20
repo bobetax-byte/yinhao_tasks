@@ -1,27 +1,13 @@
 import { useState, useTransition } from 'react'
 import { throttle } from 'lodash'
 import toast, { Toaster } from 'react-hot-toast';
-import axios from 'axios';
+import getData from '../../request';
 
 import { SearchQQItem } from "./SearchQQItem";
 import { QQDetailInfo } from '../../qq';
 import './index.scss'
 
-// 请求链接
-const QUERYQQ: string = "https://api.uomg.com/api/qq.info";
 
-
-function getData(qq: string):Promise<QQDetailInfo>{
-  return new Promise(async(resolve,reject) => {
-    try {
-      let { data }:{data:QQDetailInfo} = await axios.get(`${QUERYQQ}?qq=${qq}`);
-      console.log(data)
-      resolve(data)
-    } catch (error) {
-      reject(error)
-    }
-  })
-}
 
 function SearchQQ() {
   let [qqnum, setQQnum] = useState("");
