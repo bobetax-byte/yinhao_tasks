@@ -3,7 +3,6 @@ import '@testing-library/jest-dom';
 import axios from 'axios';
 
 import SearchQQ from '../SearchQQ'
-import { QQDetailInfo } from '@/qq'
 
 jest.mock("axios");
 
@@ -23,16 +22,20 @@ beforeAll(() => {
   });
 })
 
-const mockSuccData: QQDetailInfo = {
-  code: 1,
-  name: "姓名",
-  qlogo: `http:\/\/qlogo2.store.qq.com\/qzone\/123456\/123456\/100`,
-  qq:123456,
+const mockSuccData = {
+  data:{ 
+    code: 1,
+    name: "姓名",
+    qlogo: `http:\/\/qlogo2.store.qq.com\/qzone\/123456\/123456\/100`,
+    qq:123456,
+  }
 }
 
-const mockErrData: QQDetailInfo = {
-  code: 1123,
-  msg: "服务器错误",
+const mockErrData = {
+  data: { 
+    code: 1123,
+    msg: "服务器错误",
+  }
 }
 
 test('test SearchQQ component render', () => {
