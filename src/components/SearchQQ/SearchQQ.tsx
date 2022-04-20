@@ -6,6 +6,7 @@ import axios from 'axios';
 import { SearchQQItem } from "./SearchQQItem";
 import { QQDetailInfo } from '../../qq';
 import './index.scss'
+import { getInfo } from '@/request';
 
 // 请求链接
 const QUERYQQ: string = "https://api.uomg.com/api/qq.info";
@@ -23,10 +24,11 @@ function SearchQQ() {
   let [isPending, startPending] = useTransition();
   
   // 获取QQ号的详情信息
-  let getQQDetail = async (qq:string) => {
+  let getQQDetail = async (qq: string) => {
+    console.log("dasdsa")
     if (loading) return
     setLoading(true)
-    const { code, name = "", qlogo = "", msg = "" } = await getData(qq) || {}
+    const { code, name = "", qlogo = "", msg = "" } = await getInfo(qq) || {}
     setLoading(false)
     if (code !== 1) {
       // TODO not work
@@ -56,7 +58,8 @@ function SearchQQ() {
     startPending(()=> useThrottle(result))
   }
   // TODO 防抖
-  const useThrottle = throttle((value:string) => {
+  const useThrottle = throttle((value: string) => {
+    console.log('value',value)
     getQQDetail(value)
   }, 1000)
 

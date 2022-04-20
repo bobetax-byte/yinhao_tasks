@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import SearchQQ from '../SearchQQ'
 import { QQDetailInfo } from '@/qq'
+import { act } from 'react-dom/test-utils';
 
 jest.mock("axios");
 
@@ -58,11 +59,12 @@ test('handles server success', async () => {
   
   (axios.get as jest.Mock).mockResolvedValue(mockSuccData);
 
-  const { getByPlaceholderText,container } = render(<SearchQQ />);
-  
-  fireEvent.change(getByPlaceholderText("请输入QQ号"), {
-    target: { value: "123456" }
-  });
+  const { getByPlaceholderText, container } = render(<SearchQQ />);
+  act(() => {
+    fireEvent.change(getByPlaceholderText("请输入QQ号"), {
+      target: { value: "123456" }
+    });
+  })
 
   await screen.findByText('123456')
 
