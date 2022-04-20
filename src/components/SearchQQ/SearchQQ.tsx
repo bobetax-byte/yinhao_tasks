@@ -11,8 +11,16 @@ import './index.scss'
 const QUERYQQ: string = "https://api.uomg.com/api/qq.info";
 
 
-function getData(qq:string): Promise<QQDetailInfo>{
-  return axios.get(`QUERYQQ?qq=${qq}`);
+function getData(qq: string):Promise<QQDetailInfo>{
+  return new Promise(async(resolve,reject) => {
+    try {
+      let { data }:{data:QQDetailInfo} = await axios.get(`${QUERYQQ}?qq=${qq}`);
+      console.log(data)
+      resolve(data)
+    } catch (error) {
+      reject(error)
+    }
+  })
 }
 
 function SearchQQ() {
@@ -26,22 +34,28 @@ function SearchQQ() {
   let getQQDetail = async (qq:string) => {
     if (loading) return
     setLoading(true)
-    const { code, name = "", qlogo = "", msg = "" } = await getData(qq) || {}
-    setLoading(false)
-    if (code !== 1) {
-      // TODO not work
-      toast.error(msg);
+    try {
+      const { code, name = "", qlogo = "", msg = "服务器异常！" } = await getData(qq)
+      setLoading(false)
+      if (code !== 1) {
+        // TODO not work
+        toast.error(msg);
+        setEmpty(true)
+        return
+      };
+      // 清除所有的toast
+      toast.dismiss();
+      setEmpty(false)
+      setQqInfo({
+        qq,
+        name,
+        qlogo
+      });
+    } catch (error: any) {
       setEmpty(true)
-      return
-    };
-    // 清除所有的toast
-    toast.dismiss();
-    setEmpty(false)
-    setQqInfo({
-      qq,
-      name,
-      qlogo
-    });
+      toast.error(error.message)
+    }
+    
   }
 
   // 用户输入响应
